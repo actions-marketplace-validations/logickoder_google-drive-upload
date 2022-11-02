@@ -10,7 +10,6 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"log"
 	"os"
@@ -129,21 +128,15 @@ func main() {
 	// get filename prefix
 	filenamePrefix := githubactions.GetInput(namePrefixInput)
 
-	// get base64 encoded credentials argument from action input
+	// get credentials argument from action input
 	credentials := githubactions.GetInput(credentialsInput)
 	if credentials == "" {
 		missingInput(credentialsInput)
 	}
-	// add base64 encoded credentials argument to mask
+	// add credentials argument to mask
 	githubactions.AddMask(credentials)
 
-	// decode credentials to []byte
-	decodedCredentials, err := base64.StdEncoding.DecodeString(credentials)
-	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
-	}
-
-	creds := strings.TrimSuffix(string(decodedCredentials), "\n")
+	creds := strings.TrimSuffix(credentials, "\n")
 
 	// add decoded credentials argument to mask
 	githubactions.AddMask(creds)
